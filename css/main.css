@@ -16,7 +16,7 @@
 }
 
 h1, h2, h3, h4, h5, h6, p, a, input, textarea, ul{
-    margin: 0;
+    margin:0;
     padding:0;
 }
 
@@ -138,7 +138,7 @@ main{
 .titulo-principal{
     text-align: center;
     color: var(--clr-main);
-    margin-bottom: 2rem;
+    margin-bottom: 4rem;
     font-size: 30px;  
 }
 
@@ -227,7 +227,12 @@ img:hover{
 .contenedor-informacion{
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 1rem;
+    gap: 4rem;
+    align-items: center;
+}
+
+.contenedor-informacion li{
+    list-style-type: none;
 }
 
 .a-centrar{
@@ -246,6 +251,7 @@ video{
     cursor: pointer;
     filter: brightness(50%);
     border: 5px solid var(--clr-white);
+    transition: .5s;
 }
 
 video:hover{
@@ -417,7 +423,7 @@ input, textarea{
 @media screen and (max-width: 850px){
     .contenedor-productos,
     .contenedor-informacion{
-        grid-template-columns: 1fr 1fr 1fr;
+        grid-template-columns: 1fr 1fr;
     }
     .contenedor-formulario{
         width: 100%;
@@ -477,7 +483,7 @@ input, textarea{
 
     .contenedor-productos,
     .contenedor-informacion{
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1fr;
     }
 
     .header-mobile{
