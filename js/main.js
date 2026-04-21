@@ -1,5 +1,18 @@
+/**
+ * CATÁLOGO DE PRODUCTOS
+ * 
+ * Este módulo maneja la funcionalidad principal de la tienda:
+ * - Almacenamiento de catálogo de productos
+ * - Renderizado dinámico de productos en la galería
+ * - Filtrado por categorías (Vinilos y Peluches)
+ * - Agregar productos al carrito
+ * - Actualización del contador del carrito
+ * - Sincronización con localStorage
+ */
+
+// Información de las figuras disponibles en formato JSON (Vinilos y Peluches).
 const productos = [
-    // Figuras de Vinilo
+    // Vinilos
     {
         id: "vinyl-01",
         titulo: "Heisenberg",
@@ -163,18 +176,18 @@ const productos = [
     }
 ];
 
+// ========== ELEMENTOS DEL DOM ==========
+// Referencias a contenedores y botones principales
 const contenedorProductos = document.querySelector("#contenedor-productos");
 const botonesCategorias = document.querySelectorAll(".boton-categoria");
 const tituloPrincipal = document.querySelector("#titulo-principal");
 let botonesAgregar = document.querySelectorAll(".producto-agregar");
 const numerito = document.querySelector("#numerito");
 
+// Renderiza dinámicamente los productos en la galería.
 function cargarProductos(productosElegidos) {
-
-    contenedorProductos.innerHTML = "";
-
-    productosElegidos.forEach(producto => {
-
+    contenedorProductos.innerHTML = ""; // Limpia el contenedor de productos.
+    productosElegidos.forEach(producto => { // Itera sobre cada producto y crea un elemento HTML.
         const div = document.createElement("div");
         div.classList.add("producto");
         div.innerHTML = `
@@ -185,47 +198,44 @@ function cargarProductos(productosElegidos) {
                 <button class="producto-agregar" id="${producto.id}">Agregar</button>
             </div>
         `;
-
         contenedorProductos.append(div);
     })
-
     actualizarBotonesAgregar();
-
 }
 
 cargarProductos(productos);
 
+// Filtrar productos por categoría (Todos, Vinilos, Peluches).
 botonesCategorias.forEach(boton => {
     boton.addEventListener("click", (e) => {
-
-        botonesCategorias.forEach(boton => boton.classList.remove("active"));
+        botonesCategorias.forEach(boton => boton.classList.remove("active")); // Remueve la clase "active" de todos los botones.
         e.currentTarget.classList.add("active");
-
         if (e.currentTarget.id != "todos") {
             const productoCategoria = productos.find(producto => producto.categoria.id === e.currentTarget.id);
             tituloPrincipal.innerText = productoCategoria.categoria.nombre;
             const productosBoton = productos.filter(producto => producto.categoria.id === e.currentTarget.id);
             cargarProductos(productosBoton);
-        } else {
+        } else { // Si se selecciona "Todos" muestra todos los productos.
             tituloPrincipal.innerText = "Todos los Productos";
             cargarProductos(productos);
         }
-
     })
 });
 
+// Actualiza los event listeners de los botones "Agregar".
 function actualizarBotonesAgregar() {
-    botonesAgregar = document.querySelectorAll(".producto-agregar");
-
-    botonesAgregar.forEach(boton => {
-        boton.addEventListener("click", agregarAlCarrito);
+    botonesAgregar = document.querySelectorAll(".producto-agregar"); // Reselecciona todos los botones de agregar del DOM.
+    botonesAgregar.forEach(boton => { 
+        boton.addEventListener("click", agregarAlCarrito); // Asigna un listener de click a cada botón.
     });
 }
 
+// ========== INICIALIZACIÓN DEL CARRITO ==========
+// Recupera los productos del carrito desde el almacenamiento local del navegador.
 let productosEnCarrito;
-
 let productosEnCarritoLS = localStorage.getItem("productos-en-carrito");
 
+// Si existe un carrito guardado, lo recupera; si no, inicializa un array vacío.
 if (productosEnCarritoLS) {
     productosEnCarrito = JSON.parse(productosEnCarritoLS);
     actualizarNumerito();
@@ -233,25 +243,23 @@ if (productosEnCarritoLS) {
     productosEnCarrito = [];
 }
 
+// Agrega un producto al carrito o incrementa su cantidad.
 function agregarAlCarrito(e) {
-
-    const idBoton = e.currentTarget.id;
+    const idBoton = e.currentTarget.id; // Obtiene el ID del producto desde el ID del botón.
     const productoAgregado = productos.find(producto => producto.id === idBoton);
-
-    if(productosEnCarrito.some(producto => producto.id === idBoton)) {
+    if(productosEnCarrito.some(producto => producto.id === idBoton)) { // Si el producto ya está en el carrito incrementa la cantidad.
         const index = productosEnCarrito.findIndex(producto => producto.id === idBoton);
         productosEnCarrito[index].cantidad++;
-    } else {
+    } else { //Si es nuevo: agrega el producto con cantidad 1
         productoAgregado.cantidad = 1;
         productosEnCarrito.push(productoAgregado);
     }
-
     actualizarNumerito();
-
-    localStorage.setItem("productos-en-carrito", JSON.stringify(productosEnCarrito));
+    localStorage.setItem("productos-en-carrito", JSON.stringify(productosEnCarrito)); // Guarda los cambios en localStorage.
 }
 
+// Actualiza el contador de productos en el carrito.
 function actualizarNumerito() {
-    let nuevoNumerito = productosEnCarrito.reduce((acc, producto) => acc + producto.cantidad, 0);
-    numerito.innerText = nuevoNumerito;
+    let nuevoNumerito = productosEnCarrito.reduce((acc, producto) => acc + producto.cantidad, 0); // Utiliza reduce() para sumar todas las cantidades de productos.
+    numerito.innerText = nuevoNumerito; // Actualiza el texto del contador visible en la interfaz.
 }
